@@ -11,6 +11,6 @@ public class Solution {
 		this.board = board;
 		this.cntState = cnt;
 		this.initNum = initNum;
-		this.isFinished = board.calTotalInfeasibleDigitsAndForwardChecking()==0;
+		this.isFinished = board.sumUpDomainSizeAndForwardChecking()==0;
 	}
 }

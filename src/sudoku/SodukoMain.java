@@ -22,9 +22,14 @@ public class SodukoMain {
 			System.out.print(solution.cntState+" ");
 			//System.out.println(solution.board);
 			System.out.println(solution.isFinished?"Finished":"Failed");
+			if (solution.cntState>0)
+			{
+				System.out.println(board);
+				System.out.println(solution.board);
+			}
 			//if (!solution.isFinished) break;
 		}
-		printStatistics(record);
+		//printStatistics(record);
 		
 	}
 	

@@ -10,7 +10,8 @@ public class BoardUtil {
 		for (int j=0;j<9;j++)
 			for (int i=0;i<9;i++)
 				if (mat[j][i]==0)				
-					numInfeasibleDigit[j][i] = board.calNumOfInfeasibleDigits(i,j);				
+					numInfeasibleDigit[j][i] = board.calNumOfInfeasibleDigits(i,j);			
+		
 		// find the max number of infeasible digits (0-9)
 		int maxNumOfInfeasible=-1;
 		for (int j=0;j<9;j++)
@@ -72,28 +73,8 @@ public class BoardUtil {
 	
 	
 
-	public static boolean[] calFeasibleDigit(Board board,int x,int y)
-	{
-		int[][] mat = board.mat;
-		boolean[] feasible = new boolean[10];
-		for (int i=0;i<=9;i++) feasible[i] = true;
-		int xLeft = x-(x%3);
-		int xRight = xLeft+2;
-		int yUp = y-(y%3);
-		int yDown = yUp+2;
-		for (int i=0;i<9;i++)
-			if (mat[y][i]!=0) feasible[mat[y][i]] = false;
-		
-		for (int j=0;j<9;j++)
-			if (mat[j][x]!=0) feasible[mat[j][x]] = false;
-		
-		for (int i=xLeft;i<=xRight;i++)
-			for (int j=yUp;j<=yDown;j++)
-				feasible[mat[j][i]] = false;
-		return feasible;
-	}
 	
-	public static String printFeasibleSet(boolean[] available)
+	public static String printDomain(boolean[] available)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");

@@ -1,13 +1,17 @@
 package sudoku;
 
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+/*
+ * The solver of the sudoku problem
+ * design as a singleton pattern
+ */
 public class SudokuSolver {
+
 	private static SudokuSolver instance;
 	int numState;
-	
+
 	private SudokuSolver(){};
 	public static SudokuSolver getInstance()
 	{
@@ -15,19 +19,19 @@ public class SudokuSolver {
 			instance = new SudokuSolver();
 		return instance;			
 	}
-	
+
 	public Solution solve(Board board) throws Exception
 	{
 		numState = 0;
 		Board endBoard =  helper(board);
 		return new Solution(endBoard,81-board.countUnfilled(),numState);
 	}
-	
+
 	private class DigitConstraint implements Comparable<DigitConstraint>
 	{
 		int digit;
 		int numConstraint;
-		
+
 		public DigitConstraint(int digit, int constraint)
 		{
 			this.digit = digit;
@@ -44,7 +48,10 @@ public class SudokuSolver {
 				return 0;
 		}
 	}
-	
+	/*
+	 * use recursion. every time a variable being filled is the same problem as 
+	 * the original ones. The recursion end when all variables are filled
+	 */
 	private Board helper(Board board) throws Exception
 	{
 		numState++;
@@ -53,35 +60,38 @@ public class SudokuSolver {
 		{
 			return board.cloneIt();
 		}
+		// choose Maximum Constrained Variable and Maximum Constraining Variable
 		Point p = board.getMaximunConstrainedAndConstrainingVariable();
-		boolean[] feasible = board.calFeasibleDigit(p.x, p.y);
+		boolean[] feasible = board.getDomain(p.x, p.y);
+		/* order all values in the domain according to the value's constraints to other variable */
 		PriorityQueue<DigitConstraint> heap = new PriorityQueue<>();
 		for (int i=1;i<=9;i++)
 		{
 			if (!feasible[i]) continue;
 			board.setPoint(p.x, p.y, i);
-
-			Integer totalConstraint = board.calTotalInfeasibleDigitsAndForwardChecking();
+			/* get the Least Constraining Value and Forward-checking*/
+			Integer totalConstraint = board.sumUpDomainSizeAndForwardChecking();
+			/* forward checking, when a variable's domain is empty,  totalConstraint is null */
 			if (totalConstraint!=null)
-				heap.add(new DigitConstraint(i,totalConstraint));
+				heap.add(new DigitConstraint(i,-totalConstraint));
 		}
-		//heap = printQueue(heap);
+		// heap = printQueue(heap);
 		board.resetPoint(p.x, p.y);
 		// System.out.println(board);
-		
-		Board b = null;
+
+		Board newBoard = null;
 		while (!heap.isEmpty())
 		{
 			DigitConstraint dc = heap.poll();
 			// System.out.println(board);
 			board.setPoint(p.x, p.y, dc.digit);			
-			b = helper(board);
-			if (b!=null) break;
+			newBoard = helper(board);
+			if (newBoard!=null) break;	// If there is a solution, return the new board, otherwise, try other values
 		}
 		board.resetPoint(p.x, p.y);
-		return b;
+		return newBoard;
 	}
-	
+
 	private PriorityQueue<DigitConstraint> printQueue(Queue<DigitConstraint> queue)
 	{
 		PriorityQueue<DigitConstraint> q = new PriorityQueue<>();

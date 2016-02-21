@@ -49,8 +49,7 @@ public class Board {
 	
 	public int calNumOfInfeasibleDigits(int x,int y)
 	{
-		if (mat[y][x]!=0) return 0;
-		boolean[] available = calFeasibleDigit(x,y);
+		boolean[] available = getDomain(x,y);
 		int cnt=0;
 		for (int i=1;i<=9;i++)
 			if (!available[i])
@@ -58,7 +57,17 @@ public class Board {
 		return cnt;
 	}
 	
-	public Integer calTotalInfeasibleDigitsAndForwardChecking() throws Exception
+	public int getDomainSize(int x,int y)
+	{
+		boolean[] available = getDomain(x,y);
+		int cnt=0;
+		for (int i=1;i<=9;i++)
+			if (available[i])
+				cnt++;
+		return cnt;
+	}
+	
+	public Integer sumUpDomainSizeAndForwardChecking() throws Exception
 	{
 		int total = 0;
 		for (int j=0;j<9;j++)
@@ -66,8 +75,8 @@ public class Board {
 			{
 				if (mat[j][i]==0)
 				{
-					int constraint = calNumOfInfeasibleDigits(i,j);
-					if (constraint<9)
+					int constraint = getDomainSize(i,j);
+					if (constraint>0)
 						total+=constraint;
 					else
 						return null;
@@ -76,7 +85,13 @@ public class Board {
 		return total;
 	}
 	
-	public boolean[] calFeasibleDigit(int x,int y)
+	/**
+	 * Get the domain for a particular variable
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public boolean[] getDomain(int x,int y)
 	{
 		boolean[] feasible = new boolean[10];
 		for (int i=0;i<=9;i++) feasible[i] = true;
@@ -96,6 +111,10 @@ public class Board {
 		return feasible;
 	}
 	
+	/**
+	 * check whether the board is a valid solution
+	 * @return
+	 */
 	public boolean isValid()
 	{
 		
